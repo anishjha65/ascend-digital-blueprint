@@ -4,14 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { motion } from 'framer-motion';
 
 const ContactForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,15 +21,6 @@ const ContactForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!captchaValue) {
-      toast({
-        title: 'Verification Required',
-        description: 'Please complete the CAPTCHA verification.',
-        variant: 'destructive'
-      });
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -61,7 +50,6 @@ const ContactForm = () => {
         company: '',
         message: ''
       });
-      setCaptchaValue(null);
 
       navigate('/thank-you');
     } catch (error: any) {
@@ -202,19 +190,6 @@ const ContactForm = () => {
             />
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-            className="flex justify-center"
-          >
-            <ReCAPTCHA
-              sitekey="6LffxVMrAAAAAEx7-Ce7yAN1exfBz5ZOFFh71t41"
-              onChange={(value) => setCaptchaValue(value)}
-              theme="light"
-            />
-          </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -223,7 +198,7 @@ const ContactForm = () => {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-teal-500 text-white hover:shadow-lg transition-all py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
-              disabled={isSubmitting || !captchaValue}
+              disabled={isSubmitting}
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center">
